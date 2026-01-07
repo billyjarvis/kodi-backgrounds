@@ -1,7 +1,7 @@
+name: Build index.json
+
 permissions:
   contents: write
-
-name: Build index.json
 
 on:
   push:
@@ -22,14 +22,20 @@ jobs:
           EXCLUDE = {'.git', '.github', 'addon-artwork'}
           IMAGE_EXTS = ('.jpg', '.jpeg', '.JPG', '.JPEG')
 
-
           index = {}
-          for d in sorted(os.listdir('.')):
-              if d in EXCLUDE or not os.path.isdir(d):
+
+          for top in sorted(os.listdir('.')):
+              if top in EXCLUDE or not os.path.isdir(top):
                   continue
-              images = [f for f in sorted(os.listdir(d)) if f.lower().endswith(IMAGE_EXTS)]
+
+              images = []
+              for root, _, files in os.walk(top):
+                  for f in sorted(files):
+                      if f.lower().endswith(IMAGE_EXTS):
+                          images.append(os.path.relpath(os.path.join(root, f), top))
+
               if images:
-                  index[d] = images
+                  index[top] = images
 
           with open('index.json', 'w') as f:
               json.dump(index, f, indent=2)
@@ -42,4 +48,3 @@ jobs:
           git add index.json
           git commit -m "Auto-update index.json" || true
           git push
-
