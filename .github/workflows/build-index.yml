@@ -20,7 +20,8 @@ jobs:
           import os, json
 
           EXCLUDE = {'.git', '.github', 'addon-artwork'}
-          IMAGE_EXTS = ('.jpg', '.jpeg')
+          IMAGE_EXTS = ('.jpg', '.jpeg', '.JPG', '.JPEG')
+
 
           index = {}
           for d in sorted(os.listdir('.')):
